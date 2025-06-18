@@ -4,7 +4,7 @@ require('dotenv').config();
 const commands = [
     new SlashCommandBuilder()
         .setName('yukisettings')
-        .setDescription('Configure bot settings (Admin only in servers, personal settings in DMs)')
+        .setDescription('Configure Yuki!')
         .toJSON()
 ];
 
