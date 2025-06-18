@@ -55,7 +55,7 @@ const generateText = async (systemPrompt, userPrompt, chatHistory = [], imageBas
             }
         };
 
-        const apiKey = "" // API key is managed by Canvas/iframe for direct usage, leave empty here
+        const apiKey = process.env.GEMINI_API_KEY;
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
@@ -85,7 +85,7 @@ const generateText = async (systemPrompt, userPrompt, chatHistory = [], imageBas
 const generateImage = async (prompt) => {
     try {
         const payload = { instances: { prompt: prompt }, parameters: { "sampleCount": 1 } };
-        const apiKey = ""; // API key is managed by Canvas/iframe for direct usage, leave empty here
+        const apiKey = process.env.GEMINI_API_KEY;
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
 
         const response = await fetch(apiUrl, {
