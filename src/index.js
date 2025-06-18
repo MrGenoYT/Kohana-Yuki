@@ -1,11 +1,39 @@
 // src/index.js
 require('dotenv').config();
+const express = require('express');
 const { Client, GatewayIntentBits, Collection, PermissionsBitField } = require('discord.js');
 const { connectDB } = require('./database/mongo');
 const { registerCommands, handleInteractions } = require('./commands/settings');
 const { getBotPersonality, updateBotPersonality, getChatHistory, saveChatHistory, getBotSettings, getBotDefaultInstructions } = require('./database/mongo');
 const { generateText, generateImage, decideToReply } = require('./ai/gemini');
 const { fetchGif } = require('./utils/helpers');
+
+// Initialize Express App
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Simple health check endpoint
+app.get('/', (req, res) => {
+    res.json({ 
+        status: 'online', 
+        message: 'Kohana Yuki Discord Bot is running!',
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Health check endpoint for monitoring
+app.get('/health', (req, res) => {
+    res.json({ 
+        status: 'healthy',
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Start Express server
+app.listen(PORT, () => {
+    console.log(`Express server is running on port ${PORT}`);
+});
 
 // Initialize Discord Client
 const client = new Client({
@@ -240,4 +268,4 @@ client.on('messageCreate', async (message) => {
 });
 
 // Log in to Discord
-client.login(DISCORD_BOT_TOKEN);        
+client.login(DISCORD_BOT_TOKEN);
