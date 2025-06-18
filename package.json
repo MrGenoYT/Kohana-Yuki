@@ -1,26 +1,23 @@
 {
-  "name": "kohana-yuki",
+  "name": "kohana-yuki-bot",
   "version": "1.0.0",
-  "description": "yuki",
-  "main": "index.js",
+  "description": "An advanced AI Discord bot powered by Gemini and MongoDB.",
+  "main": "src/index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
+  "keywords": [],
+  "author": "Your Name",
+  "license": "ISC",
   "dependencies": {
-    "discord.js": "^14.14.1",
-    "@google/generative-ai": "^0.2.1",
-    "mongoose": "^8.0.3",
-    "dotenv": "^16.3.1",
-    "axios": "^1.6.2",
-    "sharp": "^0.33.1",
-    "tesseract.js": "^5.0.4",
+    "@google/generative-ai": "^0.14.0",
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5",
+    "mongoose": "^8.4.4",
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
-  },
-  "engines": {
-    "node": ">=18.0.0"
+    "nodemon": "^3.1.4"
   }
 }
