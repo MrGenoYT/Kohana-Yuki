@@ -1,20 +1,30 @@
 {
   "name": "kohana-yuki-bot",
-  "version": "2.0.0",
-  "description": "A sophisticated, personality-driven Discord bot using Gemini.",
+  "version": "1.0.0",
+  "description": "A sweet and flirty Discord bot with AI capabilities.",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js",
-    "deploy": "node deploy-commands.js"
+    "deploy-commands": "node deploy-commands.js"
   },
+  "keywords": [
+    "discord",
+    "bot",
+    "ai",
+    "gemini",
+    "chatbot"
+  ],
+  "author": "Your Name/Kohana Yuki",
+  "license": "ISC",
   "dependencies": {
-    "@google/generative-ai": "^0.11.3",
-    "discord.js": "^14.15.2",
+    "@google/generative-ai": "^0.14.1",
+    "axios": "^1.7.2",
+    "discord.js": "^14.17.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "mongodb": "^6.7.0"
+    "mongodb": "^6.8.0"
   },
-  "engines": {
-    "node": ">=18.0.0"
+  "devDependencies": {
+    "nodemon": "^3.1.4"
   }
 }
