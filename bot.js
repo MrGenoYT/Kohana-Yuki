@@ -67,24 +67,25 @@ client.on('guildCreate', async (guild) => {
 });
 
 client.on('interactionCreate', async (interaction) => {
-    const command = client.commands.get(interaction.commandName);
-    if (interaction.isChatInputCommand()) {
-        if (!command) {
-            console.error(`No command matching ${interaction.commandName} was found.`);
-            return;
-        }
-        try {
-            await command.execute(interaction, client);
-        } catch (error) {
-            console.error(error);
-            if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ content: 'There was an error while executing this command, babe! 🥺', ephemeral: true });
-            } else {
-                await interaction.reply({ content: 'There was an error while executing this command, babe! 🥺', ephemeral: true });
+    try {
+        if (interaction.isChatInputCommand()) {
+            const command = client.commands.get(interaction.commandName);
+            if (!command) {
+                console.error(`No command matching ${interaction.commandName} was found.`);
+                return;
             }
+            await command.execute(interaction, client);
+        } else {
+            await handleInteraction(interaction, client);
         }
-    } else {
-        handleInteraction(interaction, client);
+    } catch (error) {
+        console.error('Interaction error:', error);
+        const errorMessage = 'There was an error while executing this command, babe! 🥺';
+        if (interaction.replied || interaction.deferred) {
+            await interaction.followUp({ content: errorMessage, ephemeral: true }).catch(() => {});
+        } else {
+            await interaction.reply({ content: errorMessage, ephemeral: true }).catch(() => {});
+        }
     }
 });
 
