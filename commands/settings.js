@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
 const { getServerSettings, getUserData } = require('../lib/database');
 
 module.exports = {
@@ -21,25 +21,26 @@ module.exports = {
                     { name: 'Image Generation', value: settings.imageGeneration ? 'Enabled ✅' : 'Disabled ❌', inline: true },
                     { name: 'Web Search', value: settings.webSearch ? 'Enabled ✅' : 'Disabled ❌', inline: true },
                     { name: 'Behavior', value: `*${settings.behavior.substring(0, Math.min(settings.behavior.length, 100))}...*` },
-                    { name: 'Allowed Channels', value: settings.allowedChannels.length > 0 ? settings.allowedChannels.map(id => `<#${id}>`).join(', ') : 'All channels! uwu' }
+                    { name: 'Allowed Channels', value: settings.allowedChannels.length > 0 ? settings.allowedChannels.map(id => `<#${id}>`).join(', ') : 'All channels! 💖' }
                 );
 
-            // Reverted to having 'Edit Persona & Behavior' in the dropdown
-            const settingsMenuRow = new ActionRowBuilder()
+            // The main dropdown menu for server settings
+            const serverSettingsMenuRow = new ActionRowBuilder()
                 .addComponents(
                     new StringSelectMenuBuilder()
                         .setCustomId('server_settings_menu')
                         .setPlaceholder('Select a setting to change! ✨')
                         .addOptions([
-                            { label: 'Edit Persona & Behavior', value: 'edit_persona', description: 'Change my name, age, personality, and how I act.' }, // Added back to dropdown
+                            { label: 'Edit Persona & Behavior', value: 'edit_persona', description: 'Change my name, age, personality, and how I act.' },
                             { label: 'Manage Features', value: 'manage_features', description: 'Enable or disable image generation and web search.' },
                             { label: 'Manage Allowed Channels', value: 'manage_channels', description: 'Choose which channels I can chat in.' },
                             { label: 'Reset All Server Settings', value: 'reset_server_settings', description: 'Restore all settings to the default.' }
                         ])
                 );
-            await interaction.reply({ embeds: [embed], components: [settingsMenuRow], ephemeral: true });
+            await interaction.reply({ embeds: [embed], components: [serverSettingsMenuRow], ephemeral: true });
 
         } else {
+            // This block is for DM settings, no changes needed here related to persona button
             const userData = await getUserData(interaction.user.id, interaction.client.db);
             const embed = new EmbedBuilder()
                 .setTitle('Your Personal Settings')
