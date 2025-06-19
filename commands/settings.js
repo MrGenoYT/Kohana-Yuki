@@ -10,42 +10,46 @@ module.exports = {
 
     async execute(interaction) {
         if (interaction.guild) {
+            // Server settings
             const settings = await getServerSettings(interaction.guildId, interaction.client.db);
             const embed = new EmbedBuilder()
-                .setTitle(`My Settings in ${interaction.guild.name}`)
+                .setTitle(`My Settings in ${interaction.guild.name} ⚙️`)
                 .setColor(0xFFB6C1)
-                .setDescription('Here you can change how I act and what I can do in this server, babe!')
+                .setDescription('Here you can change how I act and what I can do in this server, babe! 💖')
                 .addFields(
-                    { name: 'My Name', value: settings.name, inline: true },
-                    { name: 'My Age', value: settings.age.toString(), inline: true },
-                    { name: 'Image Generation', value: settings.imageGeneration ? 'Enabled ✅' : 'Disabled ❌', inline: true },
+                    { name: 'My Name', value: `${settings.name} (max 10 chars)`, inline: true },
+                    { name: 'My Age', value: `${settings.age.toString()} (1-99)`, inline: true },
+                    { name: 'My Gender', value: `${settings.gender || 'Not set'} (male/female)`, inline: true }, // Added gender
+                    { name: 'My Mood', value: `${settings.mood} (max 100 chars, 10 moods)`, inline: false },
+                    { name: 'My Behavior', value: `*${settings.behavior.substring(0, Math.min(settings.behavior.length, 100))}...* (max 1000 chars)`, inline: false },
+                    { name: 'Drawing Feature', value: settings.imageGeneration ? 'Enabled 🎨' : 'Disabled 🚫', inline: true }, // Renamed
                     { name: 'Web Search', value: settings.webSearch ? 'Enabled ✅' : 'Disabled ❌', inline: true },
-                    { name: 'Behavior', value: `*${settings.behavior.substring(0, 100)}...*` },
-                    { name: 'Allowed Channels', value: settings.allowedChannels.length > 0 ? settings.allowedChannels.map(id => `<#${id}>`).join(', ') : 'All channels! uwu' }
+                    { name: 'Allowed Channels', value: settings.allowedChannels.length > 0 ? settings.allowedChannels.map(id => `<#${id}>`).join(', ') : 'All channels! uwu', inline: false }
                 );
 
-            const row = new ActionRowBuilder()
+             const row = new ActionRowBuilder()
                 .addComponents(
                     new StringSelectMenuBuilder()
                         .setCustomId('server_settings_menu')
-                        .setPlaceholder('Select a setting to change! ✨')
+                        .setPlaceholder('Select a server setting to change! 💖')
                         .addOptions([
-                            { label: 'Edit Persona & Behavior', value: 'edit_persona', description: 'Change my name, age, personality, and how I act.' },
-                            { label: 'Manage Features', value: 'manage_features', description: 'Enable or disable image generation and web search.' },
-                            { label: 'Manage Allowed Channels', value: 'manage_channels', description: 'Choose which channels I can chat in.' },
+                            { label: 'Edit My Persona (Name, Age, Gender, Mood, Behavior)', value: 'edit_persona', description: 'Change how I act and identify.' },
+                            { label: 'Manage Features (Drawing, Web Search)', value: 'manage_features', description: 'Toggle my special abilities.' },
+                            { label: 'Manage Allowed Channels', value: 'manage_channels', description: 'Control where I can chat.' },
                             { label: 'Reset All Server Settings', value: 'reset_server_settings', description: 'Restore all settings to the default.' }
                         ])
                 );
             await interaction.reply({ embeds: [embed], components: [row], ephemeral: true });
 
         } else {
+            // User settings (in DMs)
             const userData = await getUserData(interaction.user.id, interaction.client.db);
             const embed = new EmbedBuilder()
-                .setTitle('Your Personal Settings')
+                .setTitle('Your Personal Settings 💖')
                 .setColor(0xFFB6C1)
                 .setDescription('Here you can set special instructions for how I interact with you, babe! 💖')
                 .addFields(
-                    { name: 'Your Custom Instructions', value: userData.customInstructions || 'None set yet!' }
+                    { name: 'Your Custom Instructions', value: `${userData.customInstructions || 'None set yet!'} (max 1000 chars)` }
                 );
              const row = new ActionRowBuilder()
                 .addComponents(
@@ -61,3 +65,4 @@ module.exports = {
         }
     },
 };
+
