@@ -1,18 +1,18 @@
 {
   "name": "kohana-yuki-bot",
-  "version": "1.0.0",
-  "description": "Advanced Discord bot with human-like behavior using Gemini AI",
+  "version": "2.0.0",
+  "description": "A sophisticated, personality-driven Discord bot using Gemini.",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js",
     "deploy": "node deploy-commands.js"
   },
   "dependencies": {
-    "discord.js": "^14.14.1",
-    "@google/generative-ai": "^0.2.1",
-    "mongodb": "^6.3.0",
-    "express": "^4.18.2",
-    "dotenv": "^16.3.1"
+    "@google/generative-ai": "^0.11.3",
+    "discord.js": "^14.15.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongodb": "^6.7.0"
   },
   "engines": {
     "node": ">=18.0.0"
