@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
 const { getServerSettings, getUserData } = require('../lib/database');
 
 module.exports = {
@@ -24,21 +24,33 @@ module.exports = {
                     { name: 'Allowed Channels', value: settings.allowedChannels.length > 0 ? settings.allowedChannels.map(id => `<#${id}>`).join(', ') : 'All channels! uwu' }
                 );
 
-            const row = new ActionRowBuilder()
+            // New action row for the "Edit Persona & Behavior" button
+            const personaButtonRow = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId('edit_persona_button') // New custom ID for the button
+                        .setLabel('Edit Persona & Behavior')
+                        .setStyle(ButtonStyle.Primary) // A primary style button
+                        .setEmoji('💅') // A fun emoji!
+                );
+
+            // Existing action row for other settings in a select menu
+            const otherSettingsRow = new ActionRowBuilder()
                 .addComponents(
                     new StringSelectMenuBuilder()
                         .setCustomId('server_settings_menu')
-                        .setPlaceholder('Select a setting to change! ✨')
+                        .setPlaceholder('Select other settings to change! ✨')
                         .addOptions([
-                            { label: 'Edit Persona & Behavior', value: 'edit_persona', description: 'Change my name, age, personality, and how I act.' },
+                            // Removed 'edit_persona' from here as it's now a dedicated button
                             { label: 'Manage Features', value: 'manage_features', description: 'Enable or disable image generation and web search.' },
                             { label: 'Manage Allowed Channels', value: 'manage_channels', description: 'Choose which channels I can chat in.' },
                             { label: 'Reset All Server Settings', value: 'reset_server_settings', description: 'Restore all settings to the default.' }
                         ])
                 );
-            await interaction.reply({ embeds: [embed], components: [row], ephemeral: true });
+            await interaction.reply({ embeds: [embed], components: [personaButtonRow, otherSettingsRow], ephemeral: true });
 
         } else {
+            // This block is for DM settings, no changes needed here related to persona button
             const userData = await getUserData(interaction.user.id, interaction.client.db);
             const embed = new EmbedBuilder()
                 .setTitle('Your Personal Settings')
