@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, Collection, ChannelType, Partials } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, ChannelType } = require('discord.js');
 const { MongoClient } = require('mongodb');
 const express = require('express');
 const path = require('path');
@@ -15,7 +15,7 @@ const client = new Client({
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.DirectMessages,
     ],
-    partials: [Partials.Channel, Partials.Message], // Ensure partials for DMs and uncached messages
+    partials: ['Channel'],
 });
 
 client.commands = new Collection();
@@ -35,69 +35,63 @@ for (const file of commandFiles) {
 const app = express();
 const port = process.env.PORT || 10000;
 app.get('/', (req, res) => {
-    res.send('Kohana Yuki is online! 💖');
+    res.send('Kohana Yuki is listening. uwu');
 });
-
 app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
+    console.log(`Express server is running on port ${port}`);
 });
 
-client.on('interactionCreate', async interaction => {
-    // If it's a slash command
-    if (interaction.isChatInputCommand()) {
-        const command = interaction.client.commands.get(interaction.commandName);
+client.once('ready', async () => {
+    console.log(`${client.user.tag} is online!`);
 
-        if (!command) {
-            console.error(`No command matching ${interaction.commandName} was found.`);
-            return;
+    for (const guild of client.guilds.cache.values()) {
+        const serverData = await client.db.collection('servers').findOne({ guildId: guild.id });
+        if (!serverData) {
+            await client.db.collection('servers').insertOne({
+                guildId: guild.id,
+                ...defaultSettings
+            });
         }
+    }
+});
 
-        try {
-            await command.execute(interaction); // Pass only interaction, client is accessible via interaction.client
-        } catch (error) {
-            console.error('Command execution error:', error);
-            const errorMessage = 'There was an error while executing this command, babe! 🥺';
-            if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ content: errorMessage, ephemeral: true }).catch(() => {});
-            } else {
-                await interaction.reply({ content: errorMessage, ephemeral: true }).catch(() => {});
+client.on('guildCreate', async (guild) => {
+    const serverData = await client.db.collection('servers').findOne({ guildId: guild.id });
+    if (!serverData) {
+        await client.db.collection('servers').insertOne({
+            guildId: guild.id,
+            ...defaultSettings
+        });
+        console.log(`Joined new guild: ${guild.name}. Initialized default settings.`);
+    }
+});
+
+client.on('interactionCreate', async (interaction) => {
+    try {
+        if (interaction.isChatInputCommand()) {
+            const command = client.commands.get(interaction.commandName);
+            if (!command) {
+                console.error(`No command matching ${interaction.commandName} was found.`);
+                return;
             }
-        }
-    } else {
-        // Handle other interactions like button clicks, select menus, modals
-        try {
+            await command.execute(interaction, client);
+        } else {
             await handleInteraction(interaction, client);
-        } catch (error) {
-            console.error('Interaction error:', error);
-            const errorMessage = 'There was an error while processing your request, babe! 🥺';
-            if (interaction.replied || interaction.deferred) {
-                await interaction.followUp({ content: errorMessage, ephemeral: true }).catch(() => {});
-            } else {
-                await interaction.reply({ content: errorMessage, ephemeral: true }).catch(() => {});
-            }
+        }
+    } catch (error) {
+        console.error('Interaction error:', error);
+        const errorMessage = 'There was an error while executing this command, babe! 🥺';
+        if (interaction.replied || interaction.deferred) {
+            await interaction.followUp({ content: errorMessage, ephemeral: true }).catch(() => {});
+        } else {
+            await interaction.reply({ content: errorMessage, ephemeral: true }).catch(() => {});
         }
     }
 });
 
 client.on('messageCreate', async (message) => {
-    // Ignore bot messages
     if (message.author.bot) return;
-
-    // Handle DM messages directly
-    if (message.channel.type === ChannelType.DM) {
-        await handleMessage(message, client);
-    } else if (message.guild) {
-        // For guild messages, check if it's a command first (if you have prefix commands)
-        // For now, assuming only slash commands, so process all non-command messages
-        if (!message.content.startsWith('/')) { // Only process if not a slash command start
-             await handleMessage(message, client);
-        }
-    }
-});
-
-client.on('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
-    client.user.setActivity('with your heart 💖'); // Set bot's activity
+    await handleMessage(message, client);
 });
 
 async function start() {
@@ -110,11 +104,9 @@ async function start() {
         await client.login(process.env.DISCORD_TOKEN);
 
     } catch (error) {
-        console.error('Failed to start bot:', error);
-        process.exit(1); // Exit process if bot fails to start
+        console.error('Failed to start the bot:', error);
     }
 }
 
 start();
-
 
