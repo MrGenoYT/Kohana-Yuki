@@ -1,7 +1,7 @@
 {
   "name": "kohana-yuki-bot",
-  "version": "1.0.0",
-  "description": "A sweet and flirty Discord bot with AI capabilities.",
+  "version": "beta-1.4",
+  "description": "An advanced AI-based Discord bot named Kohana Yuki.",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js",
@@ -12,19 +12,19 @@
     "bot",
     "ai",
     "gemini",
-    "chatbot"
+    "mongodb"
   ],
-  "author": "Your Name/Kohana Yuki",
+  "author": "Your Name/Team Name",
   "license": "ISC",
   "dependencies": {
-    "@google/generative-ai": "^0.14.1",
-    "axios": "^1.7.2",
-    "discord.js": "^14.17.0",
+    "@google/generative-ai": "^0.14.0",
+    "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "mongodb": "^6.8.0"
   },
-  "devDependencies": {
-    "nodemon": "^3.1.4"
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
+
